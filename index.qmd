@@ -1,7 +1,7 @@
 ---
 title: "Self-reported life satisfaction, 2011 to 2023"
 subtitle: "Replicating the Our World in Data Grapher"
-author: "YOUR NAME HERE" # Remember to add your name!
+author: "Stephanie Ross" # Remember to add your name!
 date: "24-07-2024"
 theme: united
 ---
@@ -45,6 +45,7 @@ The main life evaluation question asked in the poll is the Cantril Life Ladder q
 
 > “Please imagine a ladder, with steps numbered from 0 at the bottom to 10 at the top. The top of the ladder represents the best possible life for you and the bottom of the ladder represents the worst possible life for you. On which step of the ladder would you say you personally feel you stand at this time?”
 
+::: {.panel-tabset}
 
 ## 🔢 Table
 
@@ -57,7 +58,12 @@ The main life evaluation question asked in the poll is the Cantril Life Ladder q
 
 # Create table
 
-"WRITE_YOUR_CODE_HERE"
+d <- cantril %>%  select(-Code) %>%  filter(Year %in% c(2011, 2023)) %>%   pivot_wider(names_from = Year,
+                                                    values_from = "Cantril ladder score") %>%  mutate("Absolute change" = round(`2011` -`2023`, 2), "Relative change" = round(c(`2011` -`2023`)/`2011`*100, 1)) 
+
+reactable(d)
+
+
 ```
 
 
@@ -107,10 +113,19 @@ cantril %>%
 # Note that your chart will not have the ability to filter countries like the one on the Our World in Data page.
 
 # Create line chart
-"WRITE_YOUR_CODE_HERE"
+dt <- cantril %>%  select(-Code) %>%  filter(Country %in% c("Benin", "Canada", "Brazil", "Chad")) 
+
+graph <- ggplot(data = dt, aes(x = `Year`, y = `Cantril ladder score`, group=`Country`, color=`Country`)) +
+  geom_line() +
+  scale_y_continuous(limits=c(0,100)) +
+  labs(x="Year", y="Cantril ladder score") +
+  theme_minimal() 
+
+  ggplotly(graph)
 ```
 
 ## 📈 Advanced Chart
+
 
 One problem with the simple chart on the previous tab is that the countries are fixed. It would be better if the user could select the countries they want to see. This is not possible with `plotly` alone, but with the `crosstalk` package and some custom JavaScript, we can achieve this, as demonstrated below.
 
@@ -159,6 +174,9 @@ function filter_default() {
 }
 window.onload = filter_default;
 </script>
+
+:::
+
 
 # {.unlisted}
 
