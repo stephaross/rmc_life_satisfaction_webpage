@@ -58,8 +58,11 @@ The main life evaluation question asked in the poll is the Cantril Life Ladder q
 
 # Create table
 
-d <- cantril %>%  select(-Code) %>%  filter(Year %in% c(2011, 2023)) %>%   pivot_wider(names_from = Year,
-                                                    values_from = "Cantril ladder score") %>%  mutate("Absolute change" = round(`2011` -`2023`, 2), "Relative change" = round(c(`2011` -`2023`)/`2011`*100, 1)) 
+d <- cantril %>%  select(-Code) %>%  filter(Year %in% c(2011, 2023)) %>%  
+  pivot_wider(names_from = Year,values_from = "Cantril ladder score") %>%  
+  mutate("2011" = round(`2011`, 2), "2023" = round(`2023`, 2),
+         "Absolute change" = round(`2011` -`2023`, 2), 
+         "Relative change" = scales::percent(c(`2011` -`2023`)/`2011`, accuracy=1))
 
 reactable(d)
 
